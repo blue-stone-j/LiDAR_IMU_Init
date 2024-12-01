@@ -43,7 +43,7 @@ struct orgtype
   double intersect;
   E_jump edj[2];
   Feature ftype;
-  orgtype( )
+  orgtype()
   {
     range     = 0;
     edj[Prev] = Nr_nor;
@@ -123,10 +123,11 @@ class Preprocess
  public:
   //   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-  Preprocess( );
-  ~Preprocess( );
+  Preprocess();
+  ~Preprocess();
 
   void process(const livox_ros_driver::CustomMsg::ConstPtr &msg, PointCloudXYZI::Ptr &pcl_out);
+  // divide a frame cloud into several segments
   void process_cut_frame_livox(const livox_ros_driver::CustomMsg::ConstPtr &msg, deque<PointCloudXYZI::Ptr> &pcl_out, deque<double> &time_lidar, const int required_frame_num, int scan_count);
   void process(const sensor_msgs::PointCloud2::ConstPtr &msg, PointCloudXYZI::Ptr &pcl_out);
   void process_cut_frame_pcl2(const sensor_msgs::PointCloud2::ConstPtr &msg, deque<PointCloudXYZI::Ptr> &pcl_out, deque<double> &time_lidar, const int required_frame_num, int scan_count);
@@ -137,7 +138,7 @@ class Preprocess
   PointCloudXYZI pl_buff[128]; // maximum 128 line lidar
   vector<orgtype> typess[128]; // maximum 128 line lidar
   int lidar_type, point_filter_num, N_SCANS;
-  ;
+
   double blind;
   bool feature_enabled, given_offset_time;
   ros::Publisher pub_full, pub_surf, pub_corn;

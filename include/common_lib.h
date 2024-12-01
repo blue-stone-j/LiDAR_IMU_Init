@@ -46,7 +46,7 @@ typedef Vector3f V3F;
 #define MD(a, b) Matrix<double, (a), (b)>
 #define VD(a) Matrix<double, (a), 1>
 
-const M3D Eye3d(M3D::Identity( ));
+const M3D Eye3d(M3D::Identity());
 const V3D Zero3d(0, 0, 0);
 
 // Vector3d Lidar_offset_to_IMU(0.05512, 0.02226, -0.0297); // Horizon
@@ -60,13 +60,13 @@ enum LID_TYPE
   L515,
   PANDAR,
   ROBOSENSE
-};                  //{1, 2, 3}
+}; //{1, 2, 3}
 struct MeasureGroup // Lidar data and imu dates for the curent process
 {
-  MeasureGroup( )
+  MeasureGroup()
   {
     lidar_beg_time = 0.0;
-    this->lidar.reset(new PointCloudXYZI( ));
+    this->lidar.reset(new PointCloudXYZI());
   };
   double lidar_beg_time;
   PointCloudXYZI::Ptr lidar;
@@ -75,18 +75,18 @@ struct MeasureGroup // Lidar data and imu dates for the curent process
 
 struct StatesGroup
 {
-  StatesGroup( )
+  StatesGroup()
   {
-    this->rot_end                 = M3D::Identity( );
+    this->rot_end                 = M3D::Identity();
     this->pos_end                 = Zero3d;
-    this->offset_R_L_I            = M3D::Identity( );
+    this->offset_R_L_I            = M3D::Identity();
     this->offset_T_L_I            = Zero3d;
     this->vel_end                 = Zero3d;
     this->bias_g                  = Zero3d;
     this->bias_a                  = Zero3d;
     this->gravity                 = Zero3d;
-    this->cov                     = MD(DIM_STATE, DIM_STATE)::Identity( ) * INIT_COV;
-    this->cov.block<9, 9>(15, 15) = MD(9, 9)::Identity( ) * 0.00001;
+    this->cov                     = MD(DIM_STATE, DIM_STATE)::Identity() * INIT_COV;
+    this->cov.block<9, 9>(15, 15) = MD(9, 9)::Identity() * 0.00001;
   };
 
   StatesGroup(const StatesGroup &b)
@@ -147,10 +147,10 @@ struct StatesGroup
   Matrix<double, DIM_STATE, 1> operator-(const StatesGroup &b)
   {
     Matrix<double, DIM_STATE, 1> a;
-    M3D rotd(b.rot_end.transpose( ) * this->rot_end);
+    M3D rotd(b.rot_end.transpose() * this->rot_end);
     a.block<3, 1>(0, 0) = Log(rotd);
     a.block<3, 1>(3, 0) = this->pos_end - b.pos_end;
-    M3D offsetd(b.offset_R_L_I.transpose( ) * this->offset_R_L_I);
+    M3D offsetd(b.offset_R_L_I.transpose() * this->offset_R_L_I);
     a.block<3, 1>(6, 0)  = Log(offsetd);
     a.block<3, 1>(9, 0)  = this->offset_T_L_I - b.offset_T_L_I;
     a.block<3, 1>(12, 0) = this->vel_end - b.vel_end;
@@ -160,9 +160,9 @@ struct StatesGroup
     return a;
   };
 
-  void resetpose( )
+  void resetpose()
   {
-    this->rot_end = M3D::Identity( );
+    this->rot_end = M3D::Identity();
     this->pos_end = Zero3d;
     this->vel_end = Zero3d;
   }
@@ -220,7 +220,7 @@ bool esti_normvector(Matrix<T, 3, 1> &normvec, const PointVector &point, const T
 {
   MatrixXf A(point_num, 3);
   MatrixXf b(point_num, 1);
-  b.setOnes( );
+  b.setOnes();
   b *= -1.0f;
 
   for (int j = 0; j < point_num; j++)
@@ -229,7 +229,7 @@ bool esti_normvector(Matrix<T, 3, 1> &normvec, const PointVector &point, const T
     A(j, 1) = point[j].y;
     A(j, 2) = point[j].z;
   }
-  normvec = A.colPivHouseholderQr( ).solve(b);
+  normvec = A.colPivHouseholderQr().solve(b);
 
   for (int j = 0; j < point_num; j++)
   {
@@ -239,7 +239,7 @@ bool esti_normvector(Matrix<T, 3, 1> &normvec, const PointVector &point, const T
     }
   }
 
-  normvec.normalize( );
+  normvec.normalize();
   return true;
 }
 
@@ -248,8 +248,8 @@ bool esti_plane(Matrix<T, 4, 1> &pca_result, const PointVector &point, const T &
 {
   Matrix<T, NUM_MATCH_POINTS, 3> A;
   Matrix<T, NUM_MATCH_POINTS, 1> b;
-  A.setZero( );
-  b.setOnes( );
+  A.setZero();
+  b.setOnes();
   b *= -1.0f;
 
   for (int j = 0; j < NUM_MATCH_POINTS; j++)
@@ -259,9 +259,9 @@ bool esti_plane(Matrix<T, 4, 1> &pca_result, const PointVector &point, const T &
     A(j, 2) = point[j].z;
   }
 
-  Matrix<T, 3, 1> normvec = A.colPivHouseholderQr( ).solve(b);
+  Matrix<T, 3, 1> normvec = A.colPivHouseholderQr().solve(b);
 
-  T n           = normvec.norm( );
+  T n           = normvec.norm();
   pca_result(0) = normvec(0) / n;
   pca_result(1) = normvec(1) / n;
   pca_result(2) = normvec(2) / n;

@@ -1,6 +1,0 @@
-{
-  "files.associations": {
-    "*.lua": "lua",
-    "condition_variable": "cpp"
-  }
-}
